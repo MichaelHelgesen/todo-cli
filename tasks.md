@@ -1,0 +1,3 @@
+- [ ] Lage app for bokregistrering
+- [ ] Lage app for musikk-registrering
+- [ ] Lage app for bok, musikk og CD registrering?
