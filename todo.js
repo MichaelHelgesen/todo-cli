@@ -10,14 +10,13 @@ let fileContent;
 function validateFile() {
   const file = fs.readFileSync("tasks.md", "utf8").trim("").split("\n");
   if(file.length === 1 && file[0] == "") {
-      console.log("Ingen oppgaver i dokumentet");
       return false
   };
   return file;
 }
 
 // Validate tasks
-function validateTask(arr) {
+function validateTask(arr, status) {
   // Check if argument is a number
   if (isNaN(secondArg)) {
     console.log("Må være et nummer.")
@@ -29,8 +28,11 @@ function validateTask(arr) {
     return false;
   }
   // Check if task is already done
-  if (arr[secondArg - 1].indexOf("- [x]") === 0) {
+  if (status && arr[secondArg - 1].indexOf(`${secondArg}. [x]`) === 0) {
       console.log("Allerede gjort")
+      return false
+  } else if (!status && arr[secondArg - 1].indexOf(`${secondArg}. [ ]`) === 0) {
+      console.log("Oppgaven allerede uferdig")
       return false
   };
   return true;
@@ -41,42 +43,58 @@ function backup() {
   fs.copyFileSync("tasks.md", "tasks.md.bak");
 }
 
+// check and uncheck task
+function checkTask(status) {
+  fileContent = validateFile();
+  if (!fileContent) {
+    console.log("Ingen oppgaver i dokumentet");
+    return
+  }
+  if (args.length > 2) {
+    console.log("Angi kun ett tall uten mellomrom");
+    return;
+  }
+  if (!validateTask(fileContent, status)) {return};
+  backup();
+  console.log(`Marker oppgave ${secondArg} som ${status ? "ferdig" : "uferdig"}`)
+
+  let editedFile = [];
+  fileContent.forEach((task, index) => {
+    if (Number(secondArg) === index + 1) {
+      const changeIndex = task.indexOf("]")
+      task = `${index + 1}. [${status ? "x" : " "}] ${task.slice(changeIndex + 2)}`
+    }
+  editedFile.push(task);
+  });
+  fs.writeFileSync("tasks.md", editedFile.join("\n") + "\n")
+}
 
 switch(firstArg) {
   // Add to list
   case "add":
     backup();
     const task = args.slice(1).join(" ")
-    fs.appendFileSync("tasks.md", `- [ ] ${task}\n`)
+    fileContent = validateFile();
+    fs.appendFileSync("tasks.md", `${fileContent ? fileContent.length + 1 : 1}. [ ] ${task}\n`)
     console.log("La til oppgave", task);
     break;
   // List tasks
   case "list":
     fileContent = validateFile();
-    if (!fileContent) {return};
+    if (!fileContent) {
+      console.log("Ingen oppgaver i dokumentet");
+      return
+    };
     console.log("Alle oppgaver:");
     console.log(fileContent.join("\n"));
     break;
   // Check a task
-  case "done":
-    fileContent = validateFile();
-    if (!fileContent) {return}
-    if (args.length > 2) {
-      console.log("Angi kun ett tall uten mellomrom");
-      return;
-    }
-    if (!validateTask(fileContent)) {return};
-    backup();
-    console.log(`Marker oppgave ${secondArg} som ferdig`)
-    let editedFile = [];
-    fileContent.forEach((task, index) => {
-      if (Number(secondArg) === index + 1) {
-        const changeIndex = task.indexOf("]")
-        task = `- [x] ${task.slice(changeIndex + 2)}`
-      }
-    editedFile.push(task);
-    });
-    fs.writeFileSync("tasks.md", editedFile.join("\n") + "\n")
+  case "check":
+    checkTask(true);
+    break;
+  // Uncheck a task
+  case "uncheck":
+    checkTask(false);
     break;
   default:
     console.log("Ugyldig kommando");

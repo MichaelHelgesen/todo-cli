@@ -1,3 +1,3 @@
-- [ ] Lage app for bokregistrering
-- [ ] Lage app for musikk-registrering
-- [ ] Lage app for bok, musikk og CD registrering?
+1. [x] oppgave4
+2. [ ] oppgave1
+3. [ ] oppgave2
