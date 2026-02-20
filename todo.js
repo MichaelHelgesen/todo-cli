@@ -4,7 +4,10 @@ const fs = require("fs");
 const args = process.argv.slice(2);
 const firstArg = args[0];
 const secondArg = args[1];
-let fileContent;
+const tasksFileName = "tasks.md";
+const completedFileName = "completed.md";
+let fileContentTasks;
+let fileContentCompleted;
 
 // Check for valid argument
 function checkForValidArgument() {
@@ -17,64 +20,74 @@ function checkForValidArgument() {
 }
 
 // Validate file
-function validateFile(silent = false) {
-  const file = fs.readFileSync("tasks.md", "utf8").trim("").split("\n");
-  if(file.length === 1 && file[0] == "") {
-    if (!silent) {console.log("Ingen oppgaver i dokumentet")};
-    return false
-  };
-  fileContent = file;
-  return true;
+function validateFile(...files) {
+  files.forEach((file) => {
+    // create file if it doesnt exist
+  if (!fs.existsSync(`./${file}`)) {fs.writeFileSync(file, "")};
+  const readFile = fs.readFileSync(file, "utf8").trim("").split("\n");
+  
+  // avoid empty line on top of document
+  if(readFile.length === 1 && readFile[0] == "") {readFile.length = 0};
+  
+  switch(file) {
+    case tasksFileName:
+      fileContentTasks = readFile;
+      break;
+    case completedFileName:
+      fileContentCompleted = readFile;
+      break;
+  }
+  })
 }
 
 // Validate tasks
-function checkForValidTask() {
-  if (isNaN(secondArg)) {
-    console.log("Må være et nummer.")
+function checkForValidTask(status) {
+  if (isNaN(secondArg) || !Number.isInteger(Number(secondArg)) || secondArg.trim().length == 0) {
+    console.log("Må være et nummer uten desimaler")
     return false;
   } 
   if (args.length > 2) {
     console.log("Angi kun ett tall uten mellomrom");
     return false;
   }
-  if (secondArg < 1 || secondArg > fileContent.length) {
+  if (!(status ? fileContentTasks.length : fileContentCompleted.length)) {
+    console.log(`Ingen ${status ? "" : "fullførte "}oppgaver i listen`); return false
+  }
+  if (secondArg < 1 || secondArg > (status ? fileContentTasks.length : fileContentCompleted.length)) {
     console.log("Nummer utenfor rekkevidde.")
     return false;
-  }
-  return true;
+  } 
+   return true;
 }
 
-// check for task status
-function checkTaskStatus(status) {
-  if (status === true && fileContent[secondArg - 1].indexOf(`${secondArg}. [x]`) === 0) {
-      console.log("Allerede gjort");
-      return false;
-  } else if (status === false && fileContent[secondArg - 1].indexOf(`${secondArg}. [ ]`) === 0) {
-      console.log("Oppgaven allerede uferdig");
-      return false;
-  } else {
-    return true;
-  };
-};
-
 // create a backup
-function backup() {
-  fs.copyFileSync("tasks.md", "tasks.md.bak");
+function backup(...files) {
+  files.forEach((file) => fs.copyFileSync(file, `${file}.bak`));
 }
 
 // check and uncheck task
 function checkTask(status) {
-  //if (!validateTask(fileContent, status)) {return};
-  console.log(`Marker oppgave ${secondArg} som ${status ? "ferdig" : "uferdig"}`)
+  const fileToCopyFrom = status ? fileContentTasks : fileContentCompleted;
+  const fileToCopyTo = status ? fileContentCompleted : fileContentTasks;
+  const fileName = status ? tasksFileName : completedFileName;
   let editedFile = [];
-  fileContent.forEach((task, index) => {
-    if (Number(secondArg) === index + 1) {
-      const changeIndex = task.indexOf("]")
-      task = `${index + 1}. [${status ? "x" : " "}] ${task.slice(changeIndex + 2)}`
+
+  // change status of task
+  const slicedTask = fileToCopyFrom[secondArg - 1].slice(fileToCopyFrom[secondArg - 1].indexOf(". [") + 5 )
+  const newTaskID = fileToCopyTo ? fileToCopyTo.length + 1 : 1;
+  const newTaskStatus = `${newTaskID}. [${status ? "x" : " "}]`
+   
+  fileToCopyFrom.forEach((task, index) => {
+    if (secondArg != index + 1) {
+      task = `${index < secondArg ? index + 1 : index}${task.slice(task.indexOf("."))}`
+      editedFile.push(task);
+    } else {
+      fileToCopyTo.push(newTaskStatus + slicedTask);
+      fs.writeFileSync((status ? completedFileName : tasksFileName), fileToCopyTo.join("\n") + "\n");
     }
-  editedFile.push(task);
   });
-  fs.writeFileSync("tasks.md", editedFile.join("\n") + "\n");
+  fs.writeFileSync(fileName, editedFile.join("\n") + "\n");
+  console.log(`Marker oppgave ${secondArg} som ${status ? "ferdig" : "uferdig"}`)
 }
 
 // delete a task
@@ -88,46 +101,44 @@ function deleteTask() {
       editedFile.push(task);
     }
   });
-  fs.writeFileSync("tasks.md", editedFile.join("\n") + "\n")
+  fs.writeFileSync(tasksFileName, editedFile.join("\n") + "\n")
 }
 
 switch(firstArg) {
   case "add":
     if ( !checkForValidArgument() ) { return };
-    validateFile(true);
-    backup();
+    validateFile(tasksFileName);
+    backup(tasksFileName);
     const task = args.slice(1).join(" ");
-    const taskID = fileContent ? fileContent.length + 1 : 1;
-    fs.appendFileSync("tasks.md", `${taskID}. [ ] ${task}\n`)
+    const taskID = fileContentTasks ? fileContentTasks.length + 1 : 1;
+    fs.appendFileSync(tasksFileName, `${taskID}. [ ] ${task}\n`)
     console.log("La til oppgave", task);
     break;
   case "check":
-    if ( !checkForValidArgument() ) { return };
-    if ( !validateFile() ) { return };
-    if ( !checkForValidTask() ) { return };
-    if ( !checkTaskStatus(true) ) { return };
-    backup();
+    validateFile(tasksFileName, completedFileName)
+    if ( !checkForValidTask(true) ) { return };
+    backup(tasksFileName, completedFileName);
     checkTask(true);
     break;
   case "uncheck":
-    if ( !checkForValidArgument() ) { return };
-    if ( !validateFile() ) { return };
-    if ( !checkForValidTask() ) { return };
-    if ( !checkTaskStatus(false) ) { return };
-    backup();
+    validateFile(tasksFileName, completedFileName)
+    if ( !checkForValidTask(false) ) { return };
+    backup(tasksFileName, completedFileName);
     checkTask(false);
     break;
   case "del":
     if ( !checkForValidArgument() ) { return };
-    if ( !validateFile() ) { return };
+    //if ( !validateFile() ) { return };
     if ( !checkForValidTask() ) { return };
-    backup();
+    //backup();
     deleteTask();
     break;
   case "list":
-    if ( !validateFile() ) { return };
+    validateFile(tasksFileName, completedFileName)
     console.log("Alle oppgaver:");
-    console.log(fileContent.join("\n"));
+    console.log(fileContentTasks.join("\n") + "\n");
+    console.log("Alle fullførte oppgaver:");
+    console.log(fileContentCompleted.join("\n"));
     break;
   default:
     console.log("Ugyldig kommando");
