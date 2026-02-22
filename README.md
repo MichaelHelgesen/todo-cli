@@ -7,7 +7,9 @@ En enkel kommandolinje-app for å håndtere todo-oppgaver, skrevet i Node.js.
 - Legge til nye oppgaver
 - Liste alle oppgaver
 - Markere oppgaver som ferdige
+- Markere oppgaver som uferdige
 - Automatisk backup ved endringer
+- Slette en oppgave
 
 ## Installasjon
 ```bash
@@ -24,7 +26,13 @@ node todo.js add "Kjøpe melk"
 node todo.js list
 
 # Markere oppgave som ferdig
-node todo.js done 1
+node todo.js check NUM
+
+# Markere oppgave som uferdig
+node todo.js uncheck NUM
+
+# Slette oppgave
+node todo.js del NUM
 ```
 
 ## Filstruktur
@@ -32,6 +40,8 @@ node todo.js done 1
 - `todo.js` - Hovedprogrammet
 - `tasks.md` - Oppgavefilen (opprettes automatisk)
 - `tasks.md.bak` - Backup av forrige versjon
+- `completed.md` - Ferdige oppgaver (opprettes automatisk)
+- `completed.md.bak` - Backup av forrige versjon av ferdige oppgaver
 
 ## Lært underveis
 
@@ -44,7 +54,8 @@ node todo.js done 1
 
 ## Fremtidige forbedringer
 
-- [ ] Slette oppgaver
-- [ ] Fjerne ferdige oppgaver
+- [x] Slette oppgaver
+- [x] Fjerne ferdige oppgaver
 - [ ] Prioritering av oppgaver
-- [ ] ID ved opprettese
+- [x] ID ved opprettese
+- [ ] Konvertere fra markdown- til JSON-fil
