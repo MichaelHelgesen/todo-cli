@@ -57,7 +57,7 @@ function checkForValidTask(status) {
   }
   if (status) {
     if (secondArg < 1 || secondArg > fileContentTasks.length) {
-      console.log("Nummer utenfor rekkevidde check.")
+      console.log("Nummer utenfor rekkevidde.")
       return false;
     } 
   } else if (!status) {
@@ -68,22 +68,38 @@ function checkForValidTask(status) {
   }
   return true;
 }
+
+// write files
+function writeFiles() {
+  fs.writeFileSync(tasksFileName, fileContentTasks.join("\n") + "\n");
+  fs.writeFileSync(completedFileName, fileContentCompleted.join("\n") + "\n");
+}
+
 // create a backup
 function backup(...files) {
   files.forEach((file) => fs.copyFileSync(file, `${file}.bak`));
 }
 
+// list tasks
 function listTasks() {
   const readFileTasks = fs.readFileSync(tasksFileName, "utf8").trim("").split("\n");
   const readFileCompleted = fs.readFileSync(completedFileName, "utf8").trim("").split("\n");
-
+  
   console.log("Oppgaver som venter:")
   readFileTasks.forEach((task, index) => {
+    if(task == "") {
+      console.log("0")
+    } else {
       console.log(`${index + 1}. [ ] ${task}`);
+  }
   });
   console.log("\nFullførte oppgaver:")
   readFileCompleted.forEach((task, index) => {
-      console.log(`${index + readFileTasks.length + 1}. [x] ${task}`);
+    if (task == "") {
+      console.log("0");
+    } else {
+      console.log(`${index + (readFileTasks[0] == "" ? readFileTasks.length : readFileTasks.length + 1)}. [x] ${task}`);
+    }
   });
 
 }
@@ -101,23 +117,35 @@ function moveTask(status) {
     }
   }); 
   (status ? fileContentTasks = editedFile : fileContentCompleted = editedFile);
-  console.log(`Marker oppgave ${secondArg} som ${status ? "ferdig" : "uferdig"}`)
-  fs.writeFileSync(tasksFileName, fileContentTasks.join("\n") + "\n");
-  fs.writeFileSync(completedFileName, fileContentCompleted.join("\n") + "\n");
-}
+  console.log(`Marker oppgave ${secondArg} som ${status ? "ferdig" : "uferdig"}`);
+  writeFiles();
+  }
 
 // delete a task
 function deleteTask() {
-  console.log(`Sletter oppgave ${secondArg}`)
-  let editedFile = [];
-  fileContent.forEach((task, index) => {
-    if (Number(secondArg) != index + 1) {
-      const changeIndex = task.slice(task.indexOf(`. [`));
-      task = `${index < secondArg ? index + 1 : index}${changeIndex}`
-      editedFile.push(task);
-    }
-  });
-  fs.writeFileSync(tasksFileName, editedFile.join("\n") + "\n")
+  backup(tasksFileName, completedFileName);
+  let newArray = [];
+  if (isNaN(secondArg) || !Number.isInteger(Number(secondArg)) || secondArg.trim().length == 0 || args.length > 2) { 
+    console.log("Angi et gyldig tall uten desimaler og mellomrom")
+    return false;
+  } else if (Number(secondArg) > 0 && Number(secondArg) <= fileContentTasks.length) {
+    newArray.push(...(fileContentTasks.slice(0, secondArg - 1)));
+    newArray.push(...(fileContentTasks.slice(secondArg)));
+    fileContentTasks = newArray;
+    writeFiles();
+    console.log(`Sletter oppgave ${secondArg}`)
+    return true;
+  } else if (Number(secondArg) <=  fileContentTasks.length + fileContentCompleted.length) {
+    newArray.push(...(fileContentCompleted.slice(0, (secondArg - fileContentTasks.length - 1))));
+    newArray.push(...(fileContentCompleted.slice((secondArg - fileContentTasks.length))));
+    fileContentCompleted = newArray;
+    writeFiles();
+    console.log(`Sletter oppgave ${secondArg}`)
+    return true;
+  } else {
+    console.log("Nummer utenfor rekkevidde");
+    return false;
+  }
 }
 
 switch(firstArg) {
@@ -140,13 +168,11 @@ switch(firstArg) {
     moveTask(false);
     break;
   case "del":
-    if ( !checkForValidArgument() ) { return };
-    //if ( !validateFile() ) { return };
-    if ( !checkForValidTask() ) { return };
-    //backup();
+    validateFile(tasksFileName, completedFileName)
     deleteTask();
     break;
   case "list":
+    validateFile(tasksFileName, completedFileName)
     listTasks();
     break;
   default:
