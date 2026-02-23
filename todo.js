@@ -104,9 +104,10 @@ function deleteTask() {
 
 function taskObjectGenerator(task) {
   const object = {
+    "createdDate": new Date().toISOString().split("T")[0],
+    "done": false,
     "id": Date.now(),
     "task": task,
-    "done": false
   }
   taskObjects.push(object);
   writeFile();
