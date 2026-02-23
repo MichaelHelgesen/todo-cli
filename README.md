@@ -38,10 +38,12 @@ node todo.js del NUM
 ## Filstruktur
 
 - `todo.js` - Hovedprogrammet
-- `tasks.md` - Oppgavefilen (opprettes automatisk)
+- ~~`tasks.md` - Oppgavefilen (opprettes automatisk)
 - `tasks.md.bak` - Backup av forrige versjon
 - `completed.md` - Ferdige oppgaver (opprettes automatisk)
-- `completed.md.bak` - Backup av forrige versjon av ferdige oppgaver
+- `completed.md.bak` - Backup av forrige versjon av ferdige oppgaver~~
+- tasks.json Oppgavefilen (opprettes automatisk)
+- tasks.json.bak Backup av forrige versjon av tasks.json
 
 ## Lært underveis
 
@@ -50,7 +52,8 @@ node todo.js del NUM
 - Man overskriver hele filen, ikke linje for linje
 - Håndtering av «edge-cases» og validering av fil og inn-data.
 - «Newline»-håndtering
-- Med mer
+- JSON-struktur og syntaksregler
+- `JSON-parse()` og `JSON-stringify()`.
 
 ## Fremtidige forbedringer
 
@@ -58,4 +61,5 @@ node todo.js del NUM
 - [x] Fjerne ferdige oppgaver
 - [ ] Prioritering av oppgaver
 - [x] ID ved opprettese
-- [ ] Konvertere fra markdown- til JSON-fil
+- [x] Konvertere fra markdown- til JSON-fil
+- [ ] Utvide til Express
