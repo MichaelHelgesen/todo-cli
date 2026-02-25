@@ -1,9 +1,5 @@
 const {
-  checkForValidArgument,
   validateFile,
-  checkForValidTask,
-  writeFile,
-  backup,
   listTasks,
   checkTask,
   deleteTask,
@@ -14,21 +10,23 @@ const {
 const express = require("express");
 const app = express();
 const port = 3301;
- app.use(express.json());
+app.use(express.json());
+app.use(validateFile);
 
-app.get("/", (req, res) => {
-  res.send("Hello world!");
-});
 app.get("/list/", (req, res) => {
-  validateFile()
   const tasks = listTasks();
   return res.json(tasks);
 });
-app.put("/task/:id", (req, res) => {
-  console.log(req.body)
-  validateFile();
+app.put("/tasks/:id", (req, res) => {
   checkTask(req.params.id, req.body.done)
-  //res.send("update task\n");
+  return res.json({"success": true})
+});
+app.post("/add", (req, res) => {
+  taskObjectGenerator(req.body.title);
+  return res.json({"success": true})
+});
+app.delete("/tasks/:id", (req, res) => {
+  deleteTask(req.params.id);
   return res.json({"success": true})
 });
 app.listen(port, () => {
