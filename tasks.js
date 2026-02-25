@@ -1,19 +1,5 @@
 "use strict"
 
-const exp = require("express");
-const app = exp();
-const port = 3300;
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-})
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
-
-
-
 const fs = require("fs");
 
 const args = process.argv.slice(2);
@@ -74,7 +60,7 @@ function backup() {
 function listTasks() { 
   const unfinishedTasks = taskObjects.filter(obj => !obj.done);
   const finishedTasks = taskObjects.filter(obj => obj.done);
-
+  return taskObjects;
   console.log("Oppgaver som venter:")
   if (!unfinishedTasks.length) {
     console.log("0")
@@ -91,13 +77,21 @@ function listTasks() {
       console.log(`${(index + 1) + unfinishedTasks.length}. [x] ${task}`);
     })
   }
+  
 }
 
 // check or uncheck task
-function checkTask(status) {
-  const unfinishedTasks = taskObjects.filter(obj => !obj.done);
-  const finishedTasks = taskObjects.filter(obj => obj.done);
-
+function checkTask(id, status) {
+  taskObjects = taskObjects.map(task => {
+    if(task.id == id) {
+      return {...task, "done": status}
+    }
+    return task;
+  })
+  writeFile();
+  //const unfinishedTasks = taskObjects.filter(obj => !obj.done);
+  //const finishedTasks = taskObjects.filter(obj => obj.done);
+  /*
   (status ? unfinishedTasks : finishedTasks).forEach((obj, index) => {
     if ((status ? secondArg : (secondArg - unfinishedTasks.length)) == index + 1) {
       obj.done = !obj.done;
@@ -105,6 +99,7 @@ function checkTask(status) {
   }); 
   console.log(`Marker oppgave ${secondArg} som ${status ? "ferdig" : "uferdig"}`);
   writeFile();
+  */
 }
 
 // delete a task
@@ -128,37 +123,14 @@ function taskObjectGenerator(task) {
   writeFile();
 };
 
-switch(firstArg) {
-  case "add":
-    if ( !checkForValidArgument() ) { return };
-    validateFile();
-    backup();
-    const task = args.slice(1).join(" ");
-    taskObjectGenerator(task)
-    console.log("La til oppgave", task);
-    break;
-  case "check":
-    validateFile()
-    if ( !checkForValidTask() ) { return };
-    backup();
-    checkTask(true);
-    break;
-  case "uncheck":
-    validateFile()
-    if ( !checkForValidTask() ) { return };
-    backup();
-    checkTask(false);
-    break;
-  case "del":
-    validateFile()
-    if ( !checkForValidTask()) { return };
-    backup();
-    deleteTask();
-    break;
-  case "list":
-    validateFile()
-    listTasks();
-    break;
-  default:
-    console.log("Ugyldig kommando");
-};
+module.exports = {
+  checkForValidArgument,
+  validateFile,
+  checkForValidTask,
+  writeFile,
+  backup,
+  listTasks,
+  checkTask,
+  deleteTask,
+  taskObjectGenerator
+}

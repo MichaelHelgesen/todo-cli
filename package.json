@@ -1,0 +1,23 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "A simple TO-DO app.",
+  "homepage": "https://github.com/MichaelHelgesen/todo-cli#readme",
+  "bugs": {
+    "url": "https://github.com/MichaelHelgesen/todo-cli/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichaelHelgesen/todo-cli.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "todo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
