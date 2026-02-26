@@ -18,16 +18,22 @@ app.get("/list/", (req, res) => {
   return res.json(tasks);
 });
 app.put("/tasks/:id", (req, res) => {
-  checkTask(req.params.id, req.body.done)
-  return res.json({"success": true})
+	if(!("done" in req.body)) {
+		return res.status(400).json({"status":400, "message": "Missing boolean in request"})
+	}
+	const result = checkTask(req.params.id, req.body.done)
+  return res.status(result.status).json(result)
 });
 app.post("/add", (req, res) => {
-  taskObjectGenerator(req.body.title);
-  return res.json({"success": true})
+	if (!req.body.title) {
+		return res.status(400).json({"status": 400, "message": "No title given"})
+	}
+  const result = taskObjectGenerator(req.body.title);
+  return res.status(result.status).json(result)
 });
 app.delete("/tasks/:id", (req, res) => {
-  deleteTask(req.params.id);
-  return res.json({"success": true})
+	const result = deleteTask(req.params.id);
+	return res.status(result.status).json(result)
 });
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

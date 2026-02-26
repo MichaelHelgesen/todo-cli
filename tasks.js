@@ -7,7 +7,8 @@ let taskObjects;
 // Validate file
 function validateFile(req, res, next) {
   // create file if it doesnt exist
-  if (!fs.existsSync(`./${tasksFileName}`)) {fs.writeFileSync(tasksFileName, "[]")};
+  if (!fs.existsSync(`./${tasksFileName}`) || fs.readFileSync(tasksFileName, "utf8") === "") {fs.writeFileSync(tasksFileName, "[]")};
+
   taskObjects = JSON.parse(fs.readFileSync(tasksFileName, "utf8"));
   next();
 }
@@ -30,20 +31,32 @@ function listTasks() {
 // check or uncheck task
 function checkTask(id, status) {
   backup();
+  const checkForID = taskObjects.filter(obj => obj.id == id);
+  if (!checkForID.length) {
+	    return {"status":404, "message": "No task found with that ID"};
+    }
+
   taskObjects = taskObjects.map(task => {
     if(task.id == id) {
-      return {...task, "done": status}
+      return {...task, "done": status};
+    } else {
+	return task;    
     }
-    return task;
-  })
+  });
   writeFile();
+  return {"status":200, "message": `Task successfully ${status? "checked" : "unchecked"}`};
 }
 
 // delete a task
 function deleteTask(id) {
     backup();
+    const checkForID = taskObjects.filter(obj => obj.id == id);
+    if (!checkForID.length) {
+	    return {"status":404, "message": "No task found with that ID"};
+    }
     taskObjects = taskObjects.filter((obj) => obj.id != id);
     writeFile();
+    return {"status":200, "message": "Task successfully deleted"};
  }
 
 function taskObjectGenerator(task) {
@@ -56,6 +69,7 @@ function taskObjectGenerator(task) {
   }
   taskObjects.push(object);
   writeFile();
+  return {"status":201, "message": "Task successfully added"};
 };
 
 module.exports = {
