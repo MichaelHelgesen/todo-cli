@@ -56,7 +56,7 @@ function deleteTask(id) {
     }
     taskObjects = taskObjects.filter((obj) => obj.id != id);
     writeFile();
-    return {"status":200, "message": `Task width ID ${id} successfully deleted`};
+    return {"status":200, "message": `Task with ID ${id} successfully deleted`};
  }
 
 function taskObjectGenerator(task) {

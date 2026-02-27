@@ -5,13 +5,15 @@ const {
   deleteTask,
   taskObjectGenerator
 } = require("./tasks.js");
-const { logger} = require("./logger.js");
+const { logger, stream } = require("./logger.js");
+const morgan = require("morgan");
 
 
 const express = require("express");
 const app = express();
 const port = 3301;
 app.use(express.json());
+app.use(morgan("combined", { stream: stream }));
 app.use(validateFile);
 
 app.get("/list/", (req, res) => {
@@ -27,7 +29,7 @@ app.put("/tasks/:id", (req, res) => {
 	if (result.status == 404) {
 		logger.warn(`Task with ID ${req.params.id} not found.`)
 	} else {
-		logger.info(`Task with ID ${req.params.id} changed status to req.body.done`)
+		logger.info(`Task with ID ${req.params.id} changed status to ${req.body.done}`)
 	}
   return res.status(result.status).json(result)
 });
