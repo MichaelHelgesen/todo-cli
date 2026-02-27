@@ -52,11 +52,11 @@ function deleteTask(id) {
     backup();
     const checkForID = taskObjects.filter(obj => obj.id == id);
     if (!checkForID.length) {
-	    return {"status":404, "message": "No task found with that ID"};
+	    return {"status":404, "message": `No task found with ID ${id}`};
     }
     taskObjects = taskObjects.filter((obj) => obj.id != id);
     writeFile();
-    return {"status":200, "message": "Task successfully deleted"};
+    return {"status":200, "message": `Task width ID ${id} successfully deleted`};
  }
 
 function taskObjectGenerator(task) {

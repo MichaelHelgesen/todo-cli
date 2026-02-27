@@ -7,8 +7,14 @@
   },
   {
     "createdDate": "2026-02-26",
-    "done": true,
+    "done": false,
     "id": 1772116583402,
     "task": "dette er en test5"
+  },
+  {
+    "createdDate": "2026-02-27",
+    "done": false,
+    "id": 1772192130897,
+    "task": "dette er en test7"
   }
 ]

@@ -1,0 +1,13 @@
+{"label":"right meow!","level":"info","message":"Added dette er en test7","service":"todo-app","timestamp":"2026-02-27T11:35:30.898Z"}
+{"label":"right meow!","level":"info","message":"No task found with that ID","service":"todo-app","timestamp":"2026-02-27T11:35:46.679Z"}
+{"label":"right meow!","level":"info","message":"No task found with ID 1772116258646","service":"todo-app","timestamp":"2026-02-27T11:36:44.256Z"}
+{"label":"right meow!","level":"warn","message":"No task found with ID 1772116258646","service":"todo-app","timestamp":"2026-02-27T11:39:24.319Z"}
+{"label":"right meow!","level":"info","message":"Task width ID 1772141418315 successfully deleted","service":"todo-app","timestamp":"2026-02-27T11:40:09.493Z"}
+{"error":"Unexpected token '}', \"{\"done\":}\" is not valid JSON","label":"right meow!","level":"error","message":"Invalid JSON","service":"todo-app","timestamp":"2026-02-27T11:55:24.913Z"}
+{"label":"right meow!","level":"warn","message":"Task with ID 177211658340 not found.","service":"todo-app","timestamp":"2026-02-27T11:57:34.580Z"}
+{"label":"right meow!","level":"info","message":"Task with ID 1772116583402 changed status","service":"todo-app","timestamp":"2026-02-27T11:57:50.107Z"}
+{"label":"right meow!","level":"info","message":"Task with ID 1772116583402 changed status","service":"todo-app","timestamp":"2026-02-27T11:58:14.048Z"}
+{"error":"Unexpected token '}', \"{\"done\": }\" is not valid JSON","label":"right meow!","level":"error","message":"Invalid JSON","service":"todo-app","timestamp":"2026-02-27T11:58:36.477Z"}
+{"label":"right meow!","level":"warn","message":"Missing boolean in request for task 1772116583402","service":"todo-app","timestamp":"2026-02-27T11:58:45.492Z"}
+{"error":"Unexpected token '}', \"{\"done\": }\" is not valid JSON","label":"right meow!","level":"error","message":"Invalid JSON","service":"todo-app","timestamp":"2026-02-27T11:59:03.794Z"}
+{"label":"right meow!","level":"info","message":"Task with ID 1772116583402 changed status","service":"todo-app","timestamp":"2026-02-27T12:14:06.583Z"}
