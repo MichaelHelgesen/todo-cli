@@ -67,9 +67,9 @@ function taskObjectGenerator(task) {
     "id": Date.now(),
     "task": task,
   }
-  taskObjects.push(object);
-  writeFile();
-  return {"status":201, "message": "Task successfully added"};
+  //taskObjects.push(object);
+  //writeFile();
+  return object;
 };
 
 module.exports = {

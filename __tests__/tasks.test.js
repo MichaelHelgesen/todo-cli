@@ -2,9 +2,11 @@ const {
 	taskObjectGenerator
 } = require("../tasks.js");
 
-test("legger til en oppgave i JSON-format", () => {
+test("Legger til en oppgave i JSON-format", () => {
 	expect(taskObjectGenerator("Ny oppgave")).toMatchObject({
-		"status": 201,
-		"message": "Task successfully added"
+    "createdDate": expect.any(String),
+    "done": false,
+		"id": expect.any(Number),
+		"task": expect.any(String)
 	})
 })

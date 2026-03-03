@@ -3,7 +3,9 @@ const {
   listTasks,
   checkTask,
   deleteTask,
-  taskObjectGenerator
+  taskObjectGenerator,
+  backup,
+  writeFile
 } = require("./tasks.js");
 const { logger, stream } = require("./logger.js");
 const morgan = require("morgan");
@@ -38,9 +40,13 @@ app.post("/add", (req, res) => {
 		logger.warn("No title given");
 		return res.status(400).json({"status": 400, "message": "No title given"})
 	}
-  const result = taskObjectGenerator(req.body.title);
+  //const result = taskObjectGenerator(req.body.title);
+  backup();
+  const newObject = taskObjectGenerator(req.body.title);
+  const results = taskObjects.push(newObject);
+  writefile();
 	logger.info(`Added ${req.body.title}`);
-  return res.status(result.status).json(result)
+  return res.status(201).json(newObject)
 });
 app.delete("/tasks/:id", (req, res) => {
 	const result = deleteTask(req.params.id);
