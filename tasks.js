@@ -8,7 +8,6 @@ let taskObjects;
 function validateFile(req, res, next) {
   // create file if it doesnt exist
   if (!fs.existsSync(`./${tasksFileName}`) || fs.readFileSync(tasksFileName, "utf8") === "") {fs.writeFileSync(tasksFileName, "[]")};
-
   taskObjects = JSON.parse(fs.readFileSync(tasksFileName, "utf8"));
   next();
 }
@@ -49,18 +48,18 @@ function checkTask(id, status) {
 
 // delete a task
 function deleteTask(id) {
-    backup();
+    //backup();
     const checkForID = taskObjects.filter(obj => obj.id == id);
     if (!checkForID.length) {
 	    return {"status":404, "message": `No task found with ID ${id}`};
     }
     taskObjects = taskObjects.filter((obj) => obj.id != id);
-    writeFile();
+    //writeFile();
     return {"status":200, "message": `Task with ID ${id} successfully deleted`};
  }
 
 function taskObjectGenerator(task) {
-  backup();
+  //backup();
   const object = {
     "createdDate": new Date().toISOString().split("T")[0],
     "done": false,
@@ -72,10 +71,22 @@ function taskObjectGenerator(task) {
   return object;
 };
 
+function getTaskObjects() {
+  return taskObjects;
+}
+
+function setTaskObjects(arr) {
+  taskObjects = arr;
+}
+
 module.exports = {
   validateFile,
   listTasks,
   checkTask,
+  getTaskObjects,
   deleteTask,
-  taskObjectGenerator
+  writeFile,
+  backup,
+  taskObjectGenerator,
+  setTaskObjects
 }

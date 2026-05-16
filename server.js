@@ -40,7 +40,6 @@ app.post("/add", (req, res) => {
 		logger.warn("No title given");
 		return res.status(400).json({"status": 400, "message": "No title given"})
 	}
-  //const result = taskObjectGenerator(req.body.title);
   backup();
   const newObject = taskObjectGenerator(req.body.title);
   const results = taskObjects.push(newObject);
@@ -53,7 +52,9 @@ app.delete("/tasks/:id", (req, res) => {
 	if (result.status === 404) {
   		logger.warn(result.message);
 	} else {
+      backup();
   		logger.info(result.message);
+      writefile();
 	} 
 	return res.status(result.status).json(result)
 });
