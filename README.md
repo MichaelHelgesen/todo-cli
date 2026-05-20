@@ -39,12 +39,12 @@ node todo.js del NUM
 
 - `todo.js` - Hovedprogrammet
 - ~~`tasks.md` - Oppgavefilen (opprettes automatisk)~~
-- ~~`tasks.md.bak` - Backup av forrige versjon~~~~
+- ~~`tasks.md.bak` - Backup av forrige versjon~~
 - ~~`completed.md` - Ferdige oppgaver (opprettes automatisk)~~
 - ~~`completed.md.bak` - Backup av forrige versjon av ferdige oppgaver~~
 - tasks.json Oppgavefilen (opprettes automatisk)
 - tasks.json.bak Backup av forrige versjon av tasks.json
-- server.js
+- server.js 
 - tasks.js
 
 ## Lært underveis
@@ -64,4 +64,7 @@ node todo.js del NUM
 - [ ] Prioritering av oppgaver
 - [x] ID ved opprettese
 - [x] Konvertere fra markdown- til JSON-fil
-- [ ] Utvide til Express
+- [x] Utvide til Express
+- [x] Loggføring
+- [ ] Opprette server
+- [x] Utforske HTTP-modulen
